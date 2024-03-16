@@ -1,32 +1,31 @@
-using Microsoft.AspNetCore.Mvc;
-using MovieTrackerMVC.Models;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
+using MovieTrackerMVC.Repositories.Abstract;
 
 namespace MovieTrackerMVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IMovieService _movieService;
+        public HomeController(IMovieService movieService)
         {
-            _logger = logger;
+            _movieService = movieService;
+        }
+        public IActionResult Index(string term="", int currentPage = 1)
+        {
+            var movies = _movieService.List(term,true,currentPage);
+            return View(movies);
         }
 
-        public IActionResult Index()
+        public IActionResult About()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult MovieDetail(int movieId)
         {
-            return View();
+            var movie = _movieService.GetById(movieId);
+            return View(movie);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }
